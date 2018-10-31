@@ -2,9 +2,10 @@ function Score(props) {
   return (
     <div id="score">
       <h2>
-        <span>Correct: {0}</span>
-        <span>Incorrect: {0}</span>
-        </h2>  
+        <span>Correct: {props.correct}</span>
+        <span>Incorrect: {props.incorrect}</span>
+      </h2>
+      <h3>{props.currentQuestion} / {props.qCount}</h3>
     </div>
   )
 }
@@ -23,7 +24,7 @@ function QuestionDisplay(props) {
     <div>
       <h1>{props.question}</h1>
       <GameButtons answers={props.answers}/>
-      <Score/>
+      <Score correct={props.correct} incorrect={props.incorrect} qCount={props.qCount} currentQuestion={props.currentQuestion}/>
     </div>
   )
 }
@@ -43,6 +44,8 @@ function QuestionData() {
     answers: ['u', 'v', 'w', 'x']},
     {question: 'what is 3?',
     answers: ['y', 'z', '1', '2']},
+    {question: 'what is uhh?',
+    answers: ['it', 'this', 'that', 'them', 'whoa, another one!']},
   ]
 }
 
@@ -50,29 +53,35 @@ class TriviaApp extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = this.generateQuestion()
+    this.state = {
+      questions: this.shuffledData(),
+      correct: 0,
+      incorrect: 0,
+      qCount: QuestionData().length,
+      currentQuestion: 0
+    }
   }
 
   shuffle(a) {
     var j, x, i;
     for (i = a.length - 1; i > 0; i--) {
-        j = Math.floor(Math.random() * (i + 1));
-        x = a[i];
-        a[i] = a[j];
-        a[j] = x;
+      j = Math.floor(Math.random() * (i + 1));
+      x = a[i];
+      a[i] = a[j];
+      a[j] = x;
     }
     return a;
   }
-  generateQuestion() {
-    let questions = QuestionData();
-    let shuffled = this.shuffle(questions);
-    
-    var chosenQuestion = shuffled[0]
-    chosenQuestion.answers = this.shuffle(chosenQuestion.answers);
-    return chosenQuestion;
+  shuffledData() {
+    var questions = QuestionData();
+    questions.map(question => {
+      question.answers = this.shuffle(question.answers)
+    });
+    return this.shuffle(questions);
   }
+
   render() {
-    return <QuestionDisplay question={this.state.question} answers={this.state.answers}/>
+    return <QuestionDisplay question={this.state.questions[this.state.currentQuestion].question} answers={this.state.questions[this.state.currentQuestion].answers} correct={this.state.correct} incorrect={this.state.incorrect} qCount={this.state.qCount} currentQuestion={this.state.currentQuestion}/>
   }
 }
 
