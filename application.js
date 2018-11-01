@@ -1,3 +1,4 @@
+// Functional components
 function Score(props) {
   return (
     <div id="score">
@@ -65,6 +66,7 @@ function EndGame() {
   }
 }
 
+// Class component for the game app itself
 class TriviaApp extends React.Component {
   constructor(props) {
     super(props)
